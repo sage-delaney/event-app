@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { QueryProvider } from '@/providers/query-provider'
 import { Navbar } from '@/components/navbar'
+import { validateSchema } from '@/lib/schema-validator'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,6 +17,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  if (process.env.NODE_ENV === 'development') {
+    validateSchema();
+  }
   return (
     <html lang="en">
       <body className={inter.className}>

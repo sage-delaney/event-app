@@ -1,1 +1,22 @@
-{"node":{},"edge":{},"encryptionKey":"J/54NQVlSTLVEkfoUdFma/4YSJ4A359V54QczeWXBc8="}
+{
+  "node": {
+    "55325dfa50c1d673469d5160876b2ac125d493c5": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsage%2FDocuments%2FDev%2Fevent-app%2Flib%2Fschema-validator.ts%22%2C%5B%22validateSchema%22%5D%5D%5D&__client_imported__=!",
+        "app/auth/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsage%2FDocuments%2FDev%2Fevent-app%2Flib%2Fschema-validator.ts%22%2C%5B%22validateSchema%22%5D%5D%5D&__client_imported__=!",
+        "app/onboarding/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsage%2FDocuments%2FDev%2Fevent-app%2Flib%2Fschema-validator.ts%22%2C%5B%22validateSchema%22%5D%5D%5D&__client_imported__=!",
+        "app/events/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsage%2FDocuments%2FDev%2Fevent-app%2Flib%2Fschema-validator.ts%22%2C%5B%22validateSchema%22%5D%5D%5D&__client_imported__=!",
+        "app/profile/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fsage%2FDocuments%2FDev%2Fevent-app%2Flib%2Fschema-validator.ts%22%2C%5B%22validateSchema%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/auth/page": "rsc",
+        "app/onboarding/page": "rsc",
+        "app/events/page": "rsc",
+        "app/profile/page": "rsc"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "fz2tvpvMqTRcTN0of4YU5zPgTPh/Xvr/pGKOCi3nG5s="
+}
