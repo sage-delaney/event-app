@@ -39,7 +39,7 @@ export default function OnboardingPage() {
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight">Welcome to EventApp!</h2>
           <p className="mt-2 text-muted-foreground">
-            Let's personalize your experience
+            Let’s personalize your experience
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export default function OnboardingPage() {
 
         {step === 1 && (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-center">What's your name?</h3>
+            <h3 className="text-xl font-semibold text-center">What’s your name?</h3>
             <input
               type="text"
               value={formData.name}
