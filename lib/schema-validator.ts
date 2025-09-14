@@ -1,14 +1,7 @@
 // lib/schema-validator.ts
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
-
-// This validator uses the service role key to bypass RLS for schema inspection.
-// It should only be used in a server-side environment and only in development.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const tableSchemas = {
   tag_categories: ['name'],
@@ -27,13 +20,15 @@ const tableSchemas = {
   event_tags: ['event_id', 'tag_id'],
 }
 
-async function getTableColumns(tableName: string): Promise<string[] | null> {
+async function getTableColumns(
+  supabaseAdmin: SupabaseClient,
+  tableName: string
+): Promise<string[] | null> {
   const { data, error } = await supabaseAdmin.rpc('get_columns', {
     table_name: tableName,
   })
 
   if (error) {
-    // A 'relation not found' error (code 42P01) is expected if the table doesn't exist.
     if (error.code !== '42P01') {
       console.error(
         `[Schema Validator] Error fetching columns for table "${tableName}":`,
@@ -51,19 +46,36 @@ export async function validateSchema() {
     return
   }
 
-  if (!serviceRoleKey) {
+  const supabaseUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  console.log('[Schema Validator] Using URL:', supabaseUrl)
+  console.log('[Schema Validator] URL envs present:', {
+    SUPABASE_URL: !!process.env.SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SERVICE_ROLE_SET: !!serviceRoleKey,
+  })
+
+  if (!supabaseUrl || !serviceRoleKey) {
     console.warn(
-      '\n\n⚠️  [Schema Validator] SUPABASE_SERVICE_ROLE_KEY is not set. Skipping schema validation. \n    Please add it to your .env.local file to enable this check.\n\n'
+      '⚠️  [Schema Validator] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY. Skipping validation.'
     )
     return
   }
+
+  const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
   console.log('[Schema Validator] Running database schema validation...')
 
   let allOk = true
 
   for (const [tableName, expectedColumns] of Object.entries(tableSchemas)) {
-    const actualColumns = await getTableColumns(tableName)
+    const actualColumns = await getTableColumns(supabaseAdmin, tableName)
+
+    if (tableName === 'events' && actualColumns) {
+      console.log('[Schema Validator] events columns:', actualColumns)
+    }
 
     if (!actualColumns) {
       console.error(

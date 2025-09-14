@@ -1,56 +1,112 @@
-'use client'
+import { getEvents } from '@/lib/queries/events'
+import EventCard from '@/components/EventCard'
+import TryAgainButton from '@/components/TryAgainButton'
+import { AlertCircle } from 'lucide-react'
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, Users } from 'lucide-react'
+interface EventsSectionProps {
+  title: string
+  description: string
+  events: any[]
+  error?: string | null
+}
 
-// Mock data for events
-const mockEvents = [
-  {
-    id: 1,
-    title: 'Tech Meetup: AI & Machine Learning',
-    date: '2025-09-15',
-    time: '18:00',
-    location: 'Downtown Conference Center',
-    attendees: 45,
-    maxAttendees: 100,
-    description: 'Join us for an evening of AI discussions and networking.',
-    category: 'Technology'
-  },
-  {
-    id: 2,
-    title: 'Food Festival 2025',
-    date: '2025-09-20',
-    time: '12:00',
-    location: 'Central Park',
-    attendees: 234,
-    maxAttendees: 500,
-    description: 'Taste amazing food from local vendors and restaurants.',
-    category: 'Food & Drink'
-  },
-  {
-    id: 3,
-    title: 'Photography Workshop',
-    date: '2025-09-25',
-    time: '10:00',
-    location: 'Art Studio Downtown',
-    attendees: 12,
-    maxAttendees: 20,
-    description: 'Learn professional photography techniques.',
-    category: 'Art'
+function EventsSection({ title, description, events, error }: EventsSectionProps) {
+  if (error) {
+    return (
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">{title}</h2>
+          <p className="text-muted-foreground">{description}</p>
+        </div>
+        
+        <div className="text-center py-12 border-2 border-dashed border-destructive/20 rounded-lg">
+          <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-4" />
+          <p className="text-destructive mb-4">{error}</p>
+          <TryAgainButton />
+        </div>
+      </section>
+    )
   }
-]
-
-export default function EventsPage() {
-  const [filter, setFilter] = useState('all')
-  const categories = ['all', 'Technology', 'Food & Drink', 'Art', 'Music', 'Sports']
-
-  const filteredEvents = filter === 'all' 
-    ? mockEvents 
-    : mockEvents.filter(event => event.category === filter)
 
   return (
-    <div className="space-y-8">
+    <section className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold mb-2">{title}</h2>
+        <p className="text-muted-foreground">{description}</p>
+      </div>
+      
+      {events.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {events.map((event) => (
+            <EventCard
+              key={event.id}
+              id={event.id}
+              title={event.title}
+              starts_at={event.starts_at}
+              ends_at={event.ends_at}
+              venue_name={event.venue_name}
+              image_url={event.image_url}
+              is_21_plus={event.is_21_plus}
+              is_dog_friendly={event.is_dog_friendly}
+              neighborhoodName={event.neighborhoodName}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 border-2 border-dashed border-muted rounded-lg">
+          <p className="text-muted-foreground">No events yet. Please check back soon.</p>
+        </div>
+      )}
+    </section>
+  )
+}
+
+export default async function EventsPage() {
+  let topEvents: any[] = []
+  let hotEvents: any[] = []
+  let newEvents: any[] = []
+  let topError: string | null = null
+  let hotError: string | null = null
+  let newError: string | null = null
+
+  try {
+    // Fetch all three sections in parallel
+    const results = await Promise.allSettled([
+      getEvents({ section: 'top', limit: 12 }),
+      getEvents({ section: 'hot', limit: 12 }),
+      getEvents({ section: 'new', limit: 12 }),
+    ])
+
+    // Handle results
+    if (results[0].status === 'fulfilled') {
+      topEvents = results[0].value
+    } else {
+      topError = 'Failed to load top events'
+      console.error('Top events error:', results[0].reason)
+    }
+
+    if (results[1].status === 'fulfilled') {
+      hotEvents = results[1].value
+    } else {
+      hotError = 'Failed to load hot events'
+      console.error('Hot events error:', results[1].reason)
+    }
+
+    if (results[2].status === 'fulfilled') {
+      newEvents = results[2].value
+    } else {
+      newError = 'Failed to load new events'
+      console.error('New events error:', results[2].reason)
+    }
+  } catch (error) {
+    console.error('Unexpected error fetching events:', error)
+    topError = 'Something went wrong'
+    hotError = 'Something went wrong'
+    newError = 'Something went wrong'
+  }
+
+  return (
+    <div className="space-y-12">
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">Discover Events</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -58,65 +114,26 @@ export default function EventsPage() {
         </p>
       </div>
 
-      {/* Filter buttons */}
-      <div className="flex flex-wrap justify-center gap-2">
-        {categories.map((category) => (
-          <Button
-            key={category}
-            variant={filter === category ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter(category)}
-            className="capitalize"
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
+      <EventsSection
+        title="Top For You"
+        description="Handpicked events we think you'll love"
+        events={topEvents}
+        error={topError}
+      />
 
-      {/* Events grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.map((event) => (
-          <div key={event.id} className="border rounded-lg p-6 space-y-4 hover:shadow-md transition-shadow">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                  {event.category}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {event.attendees}/{event.maxAttendees} attending
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold">{event.title}</h3>
-              <p className="text-sm text-muted-foreground">{event.description}</p>
-            </div>
+      <EventsSection
+        title="Also Hot This Week"
+        description="Popular events happening soon"
+        events={hotEvents}
+        error={hotError}
+      />
 
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4" />
-                <span>{event.date} at {event.time}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4" />
-                <span>{event.location}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4" />
-                <span>{event.attendees} people attending</span>
-              </div>
-            </div>
-
-            <Button className="w-full">
-              Join Event
-            </Button>
-          </div>
-        ))}
-      </div>
-
-      {filteredEvents.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No events found for the selected category.</p>
-        </div>
-      )}
+      <EventsSection
+        title="New & Noteworthy"
+        description="Fresh events added in the last 10 days"
+        events={newEvents}
+        error={newError}
+      />
     </div>
   )
 }

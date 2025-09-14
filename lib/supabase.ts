@@ -1,8 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserSupabaseClient } from './supabase/client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// For backward compatibility, export the browser client as 'supabase'
+export const supabase = createBrowserSupabaseClient()
 
 export type Database = any // Define your database types here
