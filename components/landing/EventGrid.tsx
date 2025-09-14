@@ -34,7 +34,7 @@ export default function EventGrid({
     return (
       <div className="text-center py-12">
         <h3 className="text-xl font-semibold text-red-500">Something went wrong</h3>
-        <p className="text-gray-500 mt-2">We couldn't fetch events. Please try again.</p>
+        <p className="text-gray-500 mt-2">We couldn&apos;t fetch events. Please try again.</p>
         <Button onClick={onRetry} className="mt-4">
           Retry
         </Button>

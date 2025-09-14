@@ -34,7 +34,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         <div className="text-center space-y-4">
           <div>
             <h3 className="text-lg font-semibold">Something went wrong</h3>
-            <p className="text-muted-foreground">We couldn't load this event. Please try again later.</p>
+            <p className="text-muted-foreground">We couldn&apos;t load this event. Please try again later.</p>
             <Link href="/events" className="inline-flex items-center gap-2 mt-4 text-primary hover:underline">
               <ArrowLeft className="h-4 w-4" />
               Back to events

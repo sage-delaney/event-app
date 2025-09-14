@@ -56,7 +56,7 @@ function Step4Content() {
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight">Timing & Occasion</h1>
             <p className="mt-2 text-muted-foreground">
-              When do you usually go out and what's the plan?
+              When do you usually go out and what&apos;s the plan?
             </p>
           </div>
 

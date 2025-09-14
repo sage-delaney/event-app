@@ -106,7 +106,7 @@ function OrganizerApplicationContent() {
           <CardHeader className="text-center">
             <CardTitle className="text-green-600">Application Submitted!</CardTitle>
             <CardDescription>
-              Thank you for your interest in organizing events. We'll review your application and get back to you soon.
+              Thank you for your interest in organizing events. We&apos;ll review your application and get back to you soon.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -129,7 +129,7 @@ function OrganizerApplicationContent() {
           <CardHeader>
             <CardTitle>Organizer Application</CardTitle>
             <CardDescription>
-              Tell us about yourself and the events you'd like to organize
+              Tell us about yourself and the events you&apos;d like to organize
             </CardDescription>
           </CardHeader>
           <CardContent>
